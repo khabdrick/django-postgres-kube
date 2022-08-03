@@ -1,0 +1,43 @@
+# Verion of docker-compose to use
+version: "3"
+
+services:
+  project: # This is the service for the Django application
+    build:
+      context: . # Sets the directory containing a Dockerfile .
+
+    # Maps port on the local machine to port on Docker image
+    ports:
+      - "8000:8000"
+
+    volumes:
+      # Copy changes made to the project to your image working directory as changesare made.
+      - .:/django-docker-okteto
+    # Handles the command used to run the project in the Docker container.
+
+    env_file:
+      # file to get environment variables from
+      - .env
+    environment:
+      # The environment variable credetials that is needed
+      # in django settings for Postgres to work.
+      DATABASE_URL: postgres://$DATABASE_USER:$DATABASE_PASSWORD@$DATABASE_HOST:$DATABASE_PORT/$DATABASE_NAME
+    command: >
+      sh -c "python manage.py makemigrations &&
+             python manage.py migrate"
+    depends_on:
+      - pg
+
+  pg:
+    image: postgres:10.1-alpine # pulling Postgress image from Docker hub
+    
+    env_file: .env
+    environment:
+      # credentials required by postgres image
+      POSTGRES_USER: $DATABASE_USER
+      POSTGRES_DB: $DATABASE_NAME
+      POSTGRES_PASS: $DATABASE_PASSWORD
+    volumes: 
+      - /pgdata:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
