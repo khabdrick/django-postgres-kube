@@ -1,4 +1,3 @@
----
 kind: PersistentVolume
 apiVersion: v1
 metadata:
@@ -8,14 +7,14 @@ metadata:
 spec:
   storageClassName: manual
   capacity:
-    storage: 100M
+    storage: 100M # total capacity for this persistent volume
   accessModes:
     - ReadWriteOnce
-  hostPath: # where this is stored on the kubernetes node (needs to be /data for minikube)
+  hostPath: # where pesistent volume is created on the kubernetes node (needs to be /data for minikube)
     path: "/data"
 ---
 apiVersion: v1
-kind: PersistentVolumeClaim
+kind: PersistentVolumeClaim #claim a portion of persistent volume
 metadata:
   labels:
     app: postgres
@@ -23,7 +22,7 @@ metadata:
 spec:
   storageClassName: manual
   accessModes:
-  - ReadWriteOnce
+  - ReadWriteOnce # mount as read-write by a single node
   resources:
     requests:
-      storage: 100M
+      storage: 50M # storage capacity consumed from the persistent volume
