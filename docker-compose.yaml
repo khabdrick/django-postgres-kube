@@ -24,12 +24,15 @@ services:
       DATABASE_URL: postgres://$DATABASE_USER:$DATABASE_PASSWORD@$DATABASE_HOST:$DATABASE_PORT/$DATABASE_NAME
     command: >
       sh -c "python manage.py makemigrations &&
-             python manage.py migrate"
+             python manage.py migrate &&
+             python manage.py runserver 0.0.0.0:8000"
+    
+    image: khabdrick/leads:1.0 
     depends_on:
       - pg
 
   pg:
-    image: postgres:10.1-alpine # pulling Postgress image from Docker hub
+    image: postgres:14-alpine # pulling Postgress image from Docker hub
     
     env_file: .env
     environment:
