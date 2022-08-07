@@ -11,8 +11,8 @@ services:
       - "8000:8000"
 
     volumes:
-      # Copy changes made to the project to your image working directory as changesare made.
-      - .:/django-docker-okteto
+      # Copy changes made to the project to your image working directory as changes are made.
+      - .:/django-postgres-kube
     # Handles the command used to run the project in the Docker container.
 
     env_file:
@@ -27,19 +27,20 @@ services:
              python manage.py migrate &&
              python manage.py runserver 0.0.0.0:8000"
     
-    image: khabdrick/leads:1.0 
+    image: khabdrick/leads:v1
     depends_on:
-      - pg
+      - postgres
 
-  pg:
-    image: postgres:14-alpine # pulling Postgress image from Docker hub
+  postgres:
+    image: postgres:10.3 # pulling Postgres image from Docker hub
     
-    env_file: .env
+    env_file: 
+      - .env
     environment:
       # credentials required by postgres image
       POSTGRES_USER: $DATABASE_USER
       POSTGRES_DB: $DATABASE_NAME
-      POSTGRES_PASS: $DATABASE_PASSWORD
+      DATABASE_PASSWORD: $DATABASE_PASSWORD
     volumes: 
       - /pgdata:/var/lib/postgresql/data
     ports:
